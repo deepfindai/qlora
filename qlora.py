@@ -297,6 +297,11 @@ def get_accelerate_model(args, checkpoint_dir):
         trust_remote_code=args.trust_remote_code,
         use_auth_token=args.use_auth_token
     )
+
+    # Aggiunto per errore:
+    #   The model weights are not tied. Please use the `tie_weights` method before using the `infer_auto_device` function.
+    model.tie_weights()
+
     if compute_dtype == torch.float16 and args.bits == 4:
         major, minor = torch.cuda.get_device_capability()
         if major >= 8:
@@ -456,12 +461,18 @@ ALPACA_PROMPT_DICT = {
     "prompt_input": (
         "Below is an instruction that describes a task, paired with an input that provides further context. "
         "Write a response that appropriately completes the request.\n\n"
-        "### Instruction:\n{instruction}\n\n### Input:\n{input}\n\n### Response: "
+        "Instruction:\n{instruction}\n\nInput:\n{input}\n\nResponse: "
     ),
     "prompt_no_input": (
         "Below is an instruction that describes a task. "
         "Write a response that appropriately completes the request.\n\n"
-        "### Instruction:\n{instruction}\n\n### Response: "
+        "Instruction:\n{instruction}\n\nResponse: "
+    ),
+}
+
+DEEPFIND_PROMPT_DICT = {
+    "prompt": (
+        "{instruction}"
     ),
 }
 
